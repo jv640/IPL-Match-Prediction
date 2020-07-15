@@ -155,35 +155,36 @@ while error:
 
                 team_1 = []
                 team_2 = []
-                batsman_tag = soup.find_all("table", class_ = "batsman")
-                played_player_1 = batsman_tag[0].find_all("td", class_ = "batsman-cell")
-                if len(played_player_1) != 11:
-                    not_played_1 = batsman_tag[0].find("div").find_all("a")
-                for player in played_player_1:
-                    name = player.find("a")['title']
-                    team_1.append(name[20:])
-                if len(played_player_1) != 11:
-                    for player in not_played_1:
-                        r = requests.get(player['href'])
-                        htmlContent = r.content
-                        soup = BeautifulSoup(htmlContent, 'html.parser')
-                        team_1.append(soup.find("p", class_ = "ciPlayerinformationtxt").find("span").getText())
-                        del soup
-                # print(len(team_1))
-                played_player_2 = batsman_tag[1].find_all("td", class_ = "batsman-cell")
-                if len(played_player_2) != 11:
-                    not_played_2 = batsman_tag[1].find("div").find_all("a")
-                for player in played_player_2:
-                    name = player.find("a")['title']
-                    team_2.append(name[20:])
-                if len(played_player_2) != 11:
-                    for player in not_played_2:
-                        r = requests.get(player['href'])
-                        htmlContent = r.content
-                        soup = BeautifulSoup(htmlContent, 'html.parser')
-                        team_2.append(soup.find("p", class_ = "ciPlayerinformationtxt").find("span").getText())
-                        del soup
-                # print(len(team_2))
+                if len(toss_det) == 2:
+                    batsman_tag = soup.find_all("table", class_ = "batsman")
+                    played_player_1 = batsman_tag[0].find_all("td", class_ = "batsman-cell")
+                    if len(played_player_1) != 11:
+                        not_played_1 = batsman_tag[0].find("div").find_all("a")
+                    for player in played_player_1:
+                        name = player.find("a")['title']
+                        team_1.append(name[20:])
+                    if len(played_player_1) != 11:
+                        for player in not_played_1:
+                            r = requests.get(player['href'])
+                            htmlContent = r.content
+                            soup = BeautifulSoup(htmlContent, 'html.parser')
+                            team_1.append(soup.find("p", class_ = "ciPlayerinformationtxt").find("span").getText())
+                            del soup
+                    # print(len(team_1))
+                    played_player_2 = batsman_tag[1].find_all("td", class_ = "batsman-cell")
+                    if len(played_player_2) != 11:
+                        not_played_2 = batsman_tag[1].find("div").find_all("a")
+                    for player in played_player_2:
+                        name = player.find("a")['title']
+                        team_2.append(name[20:])
+                    if len(played_player_2) != 11:
+                        for player in not_played_2:
+                            r = requests.get(player['href'])
+                            htmlContent = r.content
+                            soup = BeautifulSoup(htmlContent, 'html.parser')
+                            team_2.append(soup.find("p", class_ = "ciPlayerinformationtxt").find("span").getText())
+                            del soup
+                    # print(len(team_2))
                 
 
                 match = [str(season) + "_" + str(match_id), season, teams[0], teams[1], toss_win, toss_dec, stadium_name, win]

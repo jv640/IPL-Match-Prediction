@@ -9,6 +9,7 @@ while error:
         X = [['ID', 'Season', 'Home', 'Away', 'TossWin', 'TossDec', 'Venue', 'Winner']]
         playing = [['ID', 'Season', 'Team 1', 'Team 2']]
         stadiums = pd.read_csv("Stadium_and_Home_Teams.csv")
+        counter = 0
 
         webpages = ["https://stats.espncricinfo.com/ci/engine/records/team/match_results.html?id=2007/08;trophy=117;type=season",
                     "https://stats.espncricinfo.com/ci/engine/records/team/match_results.html?id=2009;trophy=117;type=season",
@@ -31,12 +32,12 @@ while error:
         for page in webpages:
             r = requests.get(page)
             htmlContent = r.content
-            soup = BeautifulSoup(htmlContent, 'html.parser')    
+            soupmain = BeautifulSoup(htmlContent, 'html.parser')    
             # print(soup)
             # print(soup.prettify)
             
             # Finding link for all Matches Summary in given Season
-            links = soup.find_all("a", class_ = "data-link", text = "T20")
+            links = soupmain.find_all("a", class_ = "data-link", text = "T20")
             match_id = 1
 
             # Iterating over Matches
@@ -44,32 +45,32 @@ while error:
                 # print(link['href'])
                 print("https://stats.espncricinfo.com" + link['href'])
                 r = requests.get("https://stats.espncricinfo.com" + link['href'])
-                # r = requests.get("https://stats.espncricinfo.com/ci/engine/match/336030.html")
+                # r = requests.get("https://stats.espncricinfo.com/ci/engine/match/501265.html")
                 htmlContent = r.content
-                soup = BeautifulSoup(htmlContent, 'html.parser')
+                soup_page = BeautifulSoup(htmlContent, 'html.parser')
 
                 #finding Season
-                Season_var = soup.find("a", class_ = "d-block").getText()
+                Season_var = soup_page.find("a", class_ = "d-block").getText()
                 season = Season_var[-4:]
                 # print(season)
 
                 
                 #finding Short Names of Teams
                 teams = []
-                T = soup.find_all("a", class_ = "team-name")
+                T = soup_page.find_all("a", class_ = "team-name")
                 for tt in T:
                     teams.append(tt.getText())
 
                 # Finding Full Names of Teams
                 full_team_names = []
-                TN = soup.find_all("a", class_ = "team-name")
+                TN = soup_page.find_all("a", class_ = "team-name")
                 for ttt in TN:
                     span = ttt.find("span")
                     full_team_names.append(span['title'])
                 # print(full_team_names)
 
                 # Finding Ground
-                full_place = soup.find("td", class_ = "match-venue").getText()
+                full_place = soup_page.find("td", class_ = "match-venue").getText()
                 places = full_place.split(',')
                 stadium_name = places[0]
 
@@ -97,7 +98,7 @@ while error:
                 # print(homeTeam, awayTeam)
                 
                 # Toss Details
-                toss_det = soup.find("td", text = "Toss").findNext("td").getText()
+                toss_det = soup_page.find("td", text = "Toss").findNext("td").getText()
                 toss_det = toss_det.split(',')
                 if len(toss_det) == 2:
                     toss_det[0] = toss_det[0][:-1]
@@ -124,7 +125,7 @@ while error:
                 
                 # Finding Winner of match
                 win = ""
-                winner_tag = soup.find("td", text = "Points")
+                winner_tag = soup_page.find("td", text = "Points")
                 
                 if winner_tag != None:
                     winner_tagg = winner_tag.findNext("td").getText()
@@ -142,7 +143,7 @@ while error:
                         win = win + "Away"
                         # print(winner_arr[0][:-2], full_team_names[1], win)
                 else:
-                    lose = soup.find("span", class_ = "score-run-gray")['title']
+                    lose = soup_page.find("span", class_ = "score-run-gray")['title']
                     if lose != full_team_names[1]:
                         win = win + "Away"
                     else:
@@ -156,7 +157,7 @@ while error:
                 team_1 = []
                 team_2 = []
                 if len(toss_det) == 2:
-                    batsman_tag = soup.find_all("table", class_ = "batsman")
+                    batsman_tag = soup_page.find_all("table", class_ = "batsman")
                     played_player_1 = batsman_tag[0].find_all("td", class_ = "batsman-cell")
                     if len(played_player_1) != 11:
                         not_played_1 = batsman_tag[0].find("div").find_all("a")
@@ -167,23 +168,34 @@ while error:
                         for player in not_played_1:
                             r = requests.get(player['href'])
                             htmlContent = r.content
-                            soup = BeautifulSoup(htmlContent, 'html.parser')
-                            team_1.append(soup.find("p", class_ = "ciPlayerinformationtxt").find("span").getText())
-                            del soup
+                            soup_player_name = BeautifulSoup(htmlContent, 'html.parser')
+                            team_1.append(soup_player_name.find("p", class_ = "ciPlayerinformationtxt").find("span").getText())
+                            del soup_player_name
                     # print(len(team_1))
-                    played_player_2 = batsman_tag[1].find_all("td", class_ = "batsman-cell")
+                    if len(batsman_tag) == 2:
+                        played_player_2 = batsman_tag[1].find_all("td", class_ = "batsman-cell")
+                    else:
+                        played_player_2 = soup_page.find("table", class_ = "w-100")
                     if len(played_player_2) != 11:
                         not_played_2 = batsman_tag[1].find("div").find_all("a")
                     for player in played_player_2:
-                        name = player.find("a")['title']
-                        team_2.append(name[20:])
+                        name = player.find("a", attrs = {'title': True})
+                        if name == None:
+                            r = requests.get(player['href'])
+                            htmlContent = r.content
+                            soup3 = BeautifulSoup(htmlContent, 'html.parser')
+                            team_2.append(soup3.find("p", class_ = "ciPlayerinformationtxt").find("span").getText())
+                            del soup3 
+                        else:   
+                            name = name['title']   
+                            team_2.append(name[20:])
                     if len(played_player_2) != 11:
                         for player in not_played_2:
                             r = requests.get(player['href'])
                             htmlContent = r.content
-                            soup = BeautifulSoup(htmlContent, 'html.parser')
-                            team_2.append(soup.find("p", class_ = "ciPlayerinformationtxt").find("span").getText())
-                            del soup
+                            soup_player_name = BeautifulSoup(htmlContent, 'html.parser')
+                            team_2.append(soup_player_name.find("p", class_ = "ciPlayerinformationtxt").find("span").getText())
+                            del soup_player_name
                     # print(len(team_2))
                 
 
@@ -196,10 +208,11 @@ while error:
                 playing.append(playing_11)
                 del match
                 del playing_11
-                print("Running", match_id-1)
-                # del soup
+                counter = counter + 1
+                print("Running", counter)
+                del soup_page
                 # time.sleep(2)
-            # del soup
+            del soupmain
 
         df = pd.DataFrame(X)
         df.to_csv('Matches.csv')
@@ -209,4 +222,4 @@ while error:
         error = False
     except :
         error = True
-    
+

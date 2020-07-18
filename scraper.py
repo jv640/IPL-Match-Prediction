@@ -187,7 +187,7 @@ while error:
                         if(len(played_player_2) == 0):
                             played_player_2 = batsman_tag[1].find_all("tr")
                     else:
-                        played_player_2 = soup_page.find("table", class_ = "w-100").find_all("a")
+                        played_player_2 = soup_page.find("table", class_ = "w-100").find_all("tr")
                     if len(played_player_2) != 11:
                         not_played_2 = batsman_tag[1].find("div").find_all("a")
                     for player in played_player_2:

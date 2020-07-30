@@ -27,3 +27,6 @@ for player in os.listdir('./Players/.'):
     # Save the trained model as a pickle string. 
     import joblib
     joblib.dump(regressor, './Regressors/' + player[:-4] + '.pkl')
+    joblib.dump(sc_X, './Regressors/' + player[:-4] + 'Scaler_X.pkl')
+    joblib.dump(sc_y, './Regressors/' + player[:-4] + 'Scaler_y.pkl')
+

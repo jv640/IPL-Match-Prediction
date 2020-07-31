@@ -1,11 +1,11 @@
-import joblib
+import joblib, numpy as np
 
 model = joblib.load('./model/model.pkl')
 en1 = joblib.load('./model/encoder1.pkl')
 en2 = joblib.load('./model/encoder2.pkl')
 en3 = joblib.load('./model/encoder3.pkl')
 en4 = joblib.load('./model/encoder4.pkl')
-en5 = joblib.load('./model/encoder5.pkl')
+# en5 = joblib.load('./model/encoder5.pkl')
 
 ct = joblib.load('./model/column_T.pkl')
 ct1 = joblib.load('./model/column_T1.pkl')
@@ -86,5 +86,5 @@ X = X[:, 1:]
 
 yPred = model.predict(X)
 
-ypred = en5.inverse_transform(yPred)
+# ypred = en5.inverse_transform(yPred)
 

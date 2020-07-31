@@ -21,8 +21,8 @@ X[:, 3] = labelEncoderX3.fit_transform(X[:, 3])
 labelEncoderX4 = LabelEncoder()         #for encoding stadium name
 X[:, 4] = labelEncoderX4.fit_transform(X[:, 4])
 
-labelEncoder_Y = LabelEncoder()         #for encoding winner 
-y = labelEncoder_Y.fit_transform(y)
+#labelEncoder_Y = LabelEncoder()         #for encoding winner 
+#y = labelEncoder_Y.fit_transform(y)
 
 ct = ColumnTransformer([('one_hot_encoder', OneHotEncoder(categories='auto'), [0])],remainder='passthrough')
 X = ct.fit_transform(X)

@@ -17,7 +17,7 @@ ML model predicts the winning team and the winning percentage based on the home 
 
 Clone the repository
 
-`git clone https://github.com/sureshmangs/cricMonk.git`
+`git clone https://github.com/jv640/IPL-Match-Prediction.git`
 
 
 In the client directory

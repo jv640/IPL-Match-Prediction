@@ -8,7 +8,7 @@ ML model predicts the winning team and the winning percentage based on the home 
 ## Snapshots
 
 <img src = 'images/gif.gif' alt = "gif" />
-<img src = 'images/home.png' alt = "home" />
+
 
 ## :arrow_right: Technologies Used:
 
